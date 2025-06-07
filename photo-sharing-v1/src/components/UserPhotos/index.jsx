@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Typography , Box, CardContent, Card, CardMedia, Divider, List, ListItem, ListItemText} from "@mui/material";
+import { Typography, Box, CardContent, Card, CardMedia, Divider, List, ListItem, ListItemText, Modal, Button } from "@mui/material";
 
 import "./styles.css";
 import { Link, useParams } from "react-router-dom";
+
 import models from "../../modelData/models";
 import fetchModel from "../../lib/fetchModelData";
 import { getUser } from "../../services/users";
 import { createComment, getPhotosOfUser } from "../../services/photos";
 import { BASE_URL } from "../../services/makeRequest";
+import CustomModal from "../CustomModal/CustomModal";
 const formatDate = (dateString) => new Date(dateString).toLocaleString();
 
 /**
@@ -25,24 +27,25 @@ function UserPhotos(props) {
 
 
   console.log("photos: ", userPhotos)
- 
+
   useEffect(() => {
-    if(userModel) {
+    if (userModel) {
       props.fn("Photos of " + userModel?.first_name + " " + userModel?.last_name)
     }
   }, [user.userId])
 
   const [comment, setComment] = useState("")
   const handleSendComment = (photoId) => {
-      createComment(photoId, comment).then(resp => {
-        // userPhotos.filter(photo => photo.id == photoId).at(0).comments.push(resp.data)
-        getPhotosOfUser(user.userId).then(resp => setUserPhotos(resp.data))
-        setComment("")
-      }).catch(err => {
-        console.log("create comment error: ", err)
-      })
+    createComment(photoId, comment).then(resp => {
+      // userPhotos.filter(photo => photo.id == photoId).at(0).comments.push(resp.data)
+      getPhotosOfUser(user.userId).then(resp => setUserPhotos(resp.data))
+      setComment("")
+    }).catch(err => {
+      console.log("create comment error: ", err)
+    })
   }
 
+  
   return (
     <>
       {userPhotos.map((photo) => (
@@ -61,10 +64,10 @@ function UserPhotos(props) {
             <Divider sx={{ my: 2 }} />
             <Typography variant="h6">Comments:</Typography>
             <div className="d-flex">
-                <input value={comment} onChange={(e) => setComment(e.target.value)} className="form-control rounded-0" placeholder="Enter your comment"/>
-                <button onClick={() => {
-                  handleSendComment(photo?._id)
-                }} className="btn btn-primary rounded-0">Send</button>
+              <input value={comment} onChange={(e) => setComment(e.target.value)} className="form-control rounded-0" placeholder="Enter your comment" />
+              <button onClick={() => {
+                handleSendComment(photo?._id)
+              }} className="btn btn-primary rounded-0">Send</button>
             </div>
             {photo?.comments && photo?.comments.length > 0 ? (
               <List>
@@ -79,6 +82,8 @@ function UserPhotos(props) {
                             {comment?.user?.first_name} {comment?.user?.last_name}
                           </Link>{' '}
                           - {formatDate(comment?.date_time)}
+                          
+
                         </React.Fragment>
                       }
                       secondary={comment?.comment}
@@ -91,7 +96,8 @@ function UserPhotos(props) {
             )}
           </CardContent>
         </Card>
-      ))}
+      ))
+      }
     </>
   );
 }
