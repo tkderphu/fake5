@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getAccessToken } from "../utils/token";
-export const BASE_URL = "http://localhost:8081/api"
+export const BASE_URL = "https://ylfvlh-8081.csb.app/api"
 const api = axios.create({
     baseURL: BASE_URL,
     // withCredentials: true,
